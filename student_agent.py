@@ -43,8 +43,9 @@ def get_action(obs):
     if first_time:
         target_pos = (obs[2 + target * 2], obs[3 + target * 2])
         first_time = False
-    print("target: ", target, target_pos)
+    # print("target: ", target, target_pos)
     state = get_state(obs, prev_action, target_pos, got_passenger)
+    # print("state: ", state)
     action = np.argmax(q_table[state])
     
     # update global variables
