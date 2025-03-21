@@ -45,10 +45,8 @@ def get_action(obs):
         first_time = False
     # print("target: ", target, target_pos)
     state = get_state(obs, prev_action, target_pos, got_passenger)
-    # print("state: ", state)
     if np.random.randint(20) == 0:
         action = np.random.randint(4)
-        print("random action:", action)
     else:
         action = np.argmax(q_table[state])
     
