@@ -52,6 +52,7 @@ def get_action(obs):
     else:
         action = np.argmax(q_table[state])
     
+    """
     # update global variables
     prev_action = action
     taxi_pos = (obs[0], obs[1])
@@ -73,6 +74,41 @@ def get_action(obs):
         if (obs[14] == 0 and got_passenger == 0) or (obs[15] == 0 and got_passenger == 1):
             target = (target + 1) % 4
             target_pos = (obs[2 + target * 2], obs[3 + target * 2])
+            prev_action = -1
+    """
+
+    # update global variables
+    prev_action = action
+    taxi_pos = (obs[0], obs[1])
+    station_pos = [(obs[2], obs[3]), (obs[4], obs[5]), (obs[6], obs[7]), (obs[8], obs[9])]
+    if (taxi_pos in station_pos) and (obs[15] == 1):
+        dest_pos = taxi_pos
+    if ((taxi_pos in station_pos and in_station) or taxi_pos == target_pos) and obs[14] == 1 and got_passenger == 0 and action == 4:  # success pick up
+        # print("first if")
+        got_passenger = 1
+        # target = (target + 1) % 4
+        if taxi_pos == target_pos:
+            target += 1
+        target_pos = dest_pos if dest_pos != None else (obs[2 + target * 2], obs[3 + target * 2])
+        prev_action = -1
+    elif got_passenger == 1 and action == 5:  # fail drop off
+        # print("second if")
+        got_passenger = 0
+        in_station = False
+        target -= 1
+        target_pos = (obs[0], obs[1])
+        prev_action = -1
+    elif taxi_pos == target_pos:
+        if obs[14] == 0 and got_passenger == 0:
+            # print("third if")
+            # target = (target + 1) % 4
+            target += 1
+            target_pos = (obs[2 + target * 2], obs[3 + target * 2])
+            prev_action = -1
+        elif obs[15] == 0 and got_passenger == 1:
+            # print("forth if")
+            target += 1
+            target_pos = dest_pos if dest_pos != None else (obs[2 + target * 2], obs[3 + target * 2])
             prev_action = -1
         
     return action
